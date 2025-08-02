@@ -1,8 +1,3 @@
-"""
-Test script for the Uncertainty-Aware RUL Prediction implementation.
-This script runs a simplified version to verify the code works correctly.
-"""
-
 import os
 import sys
 import numpy as np

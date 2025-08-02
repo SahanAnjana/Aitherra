@@ -1,16 +1,3 @@
-"""
-Uncertainty-Aware Remaining Useful Life (RUL) Prediction using NASA C-MAPSS Dataset
-
-This script implements a comprehensive methodology for RUL prediction that includes:
-1. Monte Carlo Dropout for epistemic uncertainty estimation
-2. Deep Ensembles for improved prediction and uncertainty quantification
-3. Temperature scaling for calibration
-4. Abstention mechanism for high-uncertainty predictions
-
-Author: Generated for MSC Project - Aitherra
-Date: July 2025
-"""
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -31,15 +18,9 @@ np.random.seed(42)
 tf.random.set_seed(42)
 
 class RULPredictor:
-    """
-    Uncertainty-aware RUL prediction model with Monte Carlo Dropout,
-    Deep Ensembles, Calibration, and Abstention mechanisms.
-    """
     
     def __init__(self, sequence_length=30, n_features=24, n_models=5, mc_samples=50):
-        """
-        Initialize the RUL predictor.
-        
+        """        
         Args:
             sequence_length (int): Length of input sequences
             n_features (int): Number of sensor features (excluding unit, cycle, operational settings)
@@ -56,9 +37,7 @@ class RULPredictor:
         self.abstention_threshold = 50.0  # RUL cycles
         
     def load_data(self, train_file, test_file, rul_file):
-        """
-        Load and preprocess the NASA C-MAPSS dataset.
-        
+        """        
         Args:
             train_file (str): Path to training data file
             test_file (str): Path to test data file
@@ -103,7 +82,6 @@ class RULPredictor:
         return train_df, test_df, feature_cols
     
     def _calculate_rul(self, df):
-        """Calculate RUL for training data."""
         df = df.copy()
         df['RUL'] = 0
         
@@ -129,9 +107,7 @@ class RULPredictor:
         return test_df
     
     def create_sequences(self, df, feature_cols):
-        """
-        Create sequences for time-series modeling.
-        
+        """        
         Args:
             df (DataFrame): Input dataframe
             feature_cols (list): List of feature column names
@@ -156,9 +132,7 @@ class RULPredictor:
         return np.array(X), np.array(y)
     
     def preprocess_data(self, train_file, test_file, rul_file):
-        """
-        Complete data preprocessing pipeline.
-        
+        """        
         Args:
             train_file (str): Path to training data file
             test_file (str): Path to test data file
@@ -200,16 +174,13 @@ class RULPredictor:
         return (X_train, y_train), (X_val, y_val), (X_test, y_test)
     
     def _normalize_sequences(self, X):
-        """Normalize sequence data."""
         X_norm = np.zeros_like(X)
         for i in range(X.shape[0]):
             X_norm[i] = self.scalers['features'].transform(X[i])
         return X_norm
     
     def create_model(self, dropout_rate=0.3, seed=None):
-        """
-        Create a neural network model with dropout layers.
-        
+        """        
         Args:
             dropout_rate (float): Dropout rate
             seed (int): Random seed for initialization
@@ -242,9 +213,7 @@ class RULPredictor:
         return model
     
     def train_ensemble(self, X_train, y_train, X_val, y_val, epochs=100, batch_size=64):
-        """
-        Train ensemble of models with different initializations.
-        
+        """        
         Args:
             X_train, y_train: Training data
             X_val, y_val: Validation data
@@ -288,9 +257,7 @@ class RULPredictor:
             print(f"Model {i+1} - Best validation loss: {val_loss:.4f}")
     
     def mc_dropout_predict(self, X, model_idx=0):
-        """
-        Perform Monte Carlo Dropout predictions.
-        
+        """        
         Args:
             X (np.array): Input data
             model_idx (int): Index of model to use
@@ -316,9 +283,7 @@ class RULPredictor:
         return mean_pred.flatten(), var_pred.flatten()
     
     def ensemble_predict(self, X):
-        """
-        Perform ensemble predictions with uncertainty quantification.
-        
+        """        
         Args:
             X (np.array): Input data
             
@@ -351,9 +316,7 @@ class RULPredictor:
         return ensemble_mean, epistemic_uncertainty, aleatoric_uncertainty
     
     def temperature_scaling(self, X_val, y_val):
-        """
-        Calibrate predictions using temperature scaling.
-        
+        """        
         Args:
             X_val (np.array): Validation input data
             y_val (np.array): Validation target data
@@ -401,7 +364,6 @@ class RULPredictor:
         print(f"Expected Calibration Error: {best_ece:.4f}")
     
     def _calculate_ece(self, y_true, y_pred, confidence, n_bins):
-        """Calculate Expected Calibration Error."""
         ece = 0.0
         n_samples = len(y_true)
         
@@ -417,9 +379,7 @@ class RULPredictor:
         return ece
     
     def predict_with_abstention(self, X):
-        """
-        Make predictions with abstention mechanism.
-        
+        """        
         Args:
             X (np.array): Input data
             
@@ -464,9 +424,7 @@ class RULPredictor:
         return results
     
     def evaluate(self, X_test, y_test):
-        """
-        Comprehensive evaluation of the model.
-        
+        """        
         Args:
             X_test (np.array): Test input data
             y_test (np.array): Test target data
@@ -545,7 +503,6 @@ class RULPredictor:
         print(f"Models saved to {save_dir}")
     
     def load_models(self, save_dir):
-        """Load trained models and scalers."""
         # Load configuration
         with open(os.path.join(save_dir, 'config.pkl'), 'rb') as f:
             config = pickle.load(f)
@@ -581,9 +538,7 @@ class RULPredictor:
         print(f"Models loaded from {save_dir}")
 
 def create_visualizations(predictor, X_test, y_test, results, metrics, save_dir):
-    """
-    Create comprehensive visualizations.
-    
+    """    
     Args:
         predictor: Trained RUL predictor
         X_test: Test input data
@@ -725,7 +680,6 @@ def create_visualizations(predictor, X_test, y_test, results, metrics, save_dir)
     plt.show()
 
 def print_metrics(metrics):
-    """Print comprehensive evaluation metrics."""
     print("\n" + "="*50)
     print("EVALUATION METRICS")
     print("="*50)
@@ -739,7 +693,6 @@ def print_metrics(metrics):
     print("="*50)
 
 def main():
-    """Main execution function."""
     print("Starting Uncertainty-Aware RUL Prediction...")
     
     # Define file paths (relative to the script location)
